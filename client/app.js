@@ -28,6 +28,7 @@ const login = (e) => {
     loginForm.classList.remove("show");
     messagesSection.classList.add("show");
     addMessageForm.classList.add("show");
+    socket.emit("join", userName);
   } else {
     alert("Please enter a username");
   }
@@ -47,7 +48,7 @@ function sendMessage(e) {
   }
 }
 
-const addMessage = (author, content) => {
+function addMessage(author, content) {
   const message = document.createElement("li");
   message.classList.add("message");
   message.classList.add("message--received");
@@ -59,7 +60,7 @@ const addMessage = (author, content) => {
     </div>
     `;
   messagesList.appendChild(message);
-};
+}
 
 // Event listeners
 

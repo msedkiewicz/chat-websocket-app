@@ -9,6 +9,7 @@ const path = require("path");
 const io = socket(server);
 
 const messages = [];
+const users = [];
 app.use(express.static(path.join(__dirname, "/client/")));
 
 app.get("*", (req, res) => {
@@ -17,13 +18,26 @@ app.get("*", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("New client! Its id - " + socket.id);
+  socket.on("join", (userName) => {
+    users.push({ id: socket.id, name: userName });
+    socket.broadcast.emit("message", {
+      author: "Chatbot",
+      content: `<i>${userName} has joined the conversation!`,
+    });
+  });
   socket.on("message", (message) => {
     console.log("Oh, I've got something from " + socket.id);
     messages.push(message);
     socket.broadcast.emit("message", message);
   });
   socket.on("disconnect", () => {
-    console.log("Oh, socket " + socket.id + " has left");
+    if (users.length > 0) {
+      userName = users.filter((user) => user.id === socket.id)[0].name;
+      loggedUsers = users.filter((user) => user.id !== socket.id);
+      socket.broadcast.emit("message", {
+        author: "Chatbot",
+        content: `<i>${userName} has left the conversation... :(`,
+      });
+    }
   });
-  console.log("I've added a listener on message and disconnect events \n");
 });
