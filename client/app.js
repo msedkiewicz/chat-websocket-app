@@ -1,3 +1,11 @@
+// Configure Socket.IO
+
+const socket = io();
+
+// Socket listeners
+
+socket.on('message', (event) => addMessage(event.author, event.content));
+
 // References to HTML elements
 
 const loginForm = document.querySelector("#welcome-form");
