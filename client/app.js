@@ -4,7 +4,7 @@ const socket = io();
 
 // Socket listeners
 
-socket.on('message', (event) => addMessage(event.author, event.content));
+socket.on("message", (event) => addMessage(event.author, event.content));
 
 // References to HTML elements
 
@@ -33,15 +33,19 @@ const login = (e) => {
   }
 };
 
-const sendMessage = (e) => {
+function sendMessage(e) {
   e.preventDefault();
-  if (messageContentInput.value.length > 0) {
-    addMessage(userName, messageContentInput.value);
-    messageContentInput.value = "";
+
+  let messageContent = messageContentInput.value;
+
+  if (!messageContent.length) {
+    alert("You have to type something!");
   } else {
-    alert("Please enter a message");
+    addMessage(userName, messageContent);
+    socket.emit("message", { author: userName, content: messageContent });
+    messageContentInput.value = "";
   }
-};
+}
 
 const addMessage = (author, content) => {
   const message = document.createElement("li");
